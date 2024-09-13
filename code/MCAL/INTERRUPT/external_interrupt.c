@@ -116,64 +116,17 @@ Std_ReturnType Ext_RBx_Init(const Ext_RBx_t *rbx)
     }
     else{
         /*Disable Interrupt*/
-//        ret = Ext_RBx_Disable(rbx);
-        ret = EXT_RBx_InterruptDisable();
+        ret = Ext_RBx_Disable(rbx);
         /*clear flag*/
-//        ret &= Ext_RBx_ClearFlag(rbx);
-        ret = EXT_RBx_InterruptFlagClear();
+        ret &= Ext_RBx_ClearFlag(rbx);
         /*priority*/
-//        ret &= Ext_RBx_Priority(rbx);
-#ifdef INTERRUPT_PRIORITY_LEVELS  
-        Interrupt_priorityLevelEnable();
-        if(HIGH_PRIORITY == rbx->Priority){
-            Interrupt_HighPriorityEnable();
-            EXT_RBx_InterruptHighPriority();
-        }
-        else if(LOW_PRIORITY == rbx->Priority){
-            Interrupt_LowPriorityEnable();
-            EXT_RBx_InterruptLowPriority();
-        }
-        else{
-            /*Nothing*/
-        }
-#else         
-        Interrupt_globalInterruptEnable();
-        Interrupt_prepheralInterruptEnable();
-        
-    
-#endif
+        ret &= Ext_RBx_Priority(rbx);
         /*pin config*/
         ret &= gpio_pin_initialize(&(rbx->mcu_pin));
         /*interrupt callback*/
-//        ret &= Ext_RBx_setInterruptHandler(rbx);
-        switch(rbx->mcu_pin.Pin){
-            case GPIO_PIN4:
-                ret &= RB4_High_setInterruptHandler(rbx->EXT_HIGH_interruptHandler);
-                ret &= RB4_Low_setInterruptHandler(rbx->EXT_LOW_interruptHandler);
-                break;
-                
-            case GPIO_PIN5:
-                ret &= RB5_High_setInterruptHandler(rbx->EXT_HIGH_interruptHandler);
-                ret &= RB5_Low_setInterruptHandler(rbx->EXT_LOW_interruptHandler);
-                break;
-                
-            case GPIO_PIN6:
-                ret &= RB6_High_setInterruptHandler(rbx->EXT_HIGH_interruptHandler);
-                ret &= RB6_Low_setInterruptHandler(rbx->EXT_LOW_interruptHandler);
-                break;
-                
-            case GPIO_PIN7:
-                ret &= RB7_High_setInterruptHandler(rbx->EXT_HIGH_interruptHandler);
-                ret &= RB7_Low_setInterruptHandler(rbx->EXT_LOW_interruptHandler);
-                break;
-                
-            default:
-                /*Nothing*/
-                break;
-        }
+        ret &= Ext_RBx_setInterruptHandler(rbx);
         /*Enable Interrupt*/
-//        ret &= Ext_RBx_Enable(rbx);
-        ret &= EXT_RBx_InterruptEnable();
+        ret &= Ext_RBx_Enable(rbx);
     }
     return ret;
 }
